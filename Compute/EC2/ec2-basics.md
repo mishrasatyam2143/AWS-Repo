@@ -209,16 +209,20 @@ Control how AWS places EC2 instances physically.
 ### List instances
 ```bash
 aws ec2 describe-instances --output table
-Stop instance
+
+# Stop instance
 
 aws ec2 stop-instances --instance-ids i-xxxxxxxxxxxxx
-Start instance
+
+# Start instance
 
 aws ec2 start-instances --instance-ids i-xxxxxxxxxxxxx
-Terminate instance
+
+# Terminate instance
 
 aws ec2 terminate-instances --instance-ids i-xxxxxxxxxxxxx
-Create an EBS volume
+
+# Create an EBS volume
 
 aws ec2 create-volume --size 8 --availability-zone ap-south-1a --volume-type gp3
 
