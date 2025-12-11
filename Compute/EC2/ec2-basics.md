@@ -224,22 +224,21 @@ aws ec2 create-volume --size 8 --availability-zone ap-south-1a --volume-type gp3
 
 ```
 ```
-```
 
 ---
 
 ## Best Practices
 
-Use IAM roles instead of storing AWS keys
+- Use IAM roles instead of storing AWS keys
 
-Restrict SSH to your IP
+- Restrict SSH to your IP
 
-Prefer SSM Session Manager over SSH
+- Prefer SSM Session Manager over SSH
 
-Tag all instances
+- Tag all instances
 
-Use Auto Scaling Groups for production
+- Use Auto Scaling Groups for production
 
-Enable EBS encryption by default
+- Enable EBS encryption by default
 
 ---
