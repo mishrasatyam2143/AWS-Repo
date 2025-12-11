@@ -37,7 +37,7 @@ aws-services-repo/
 
 ---
 
-## ✅ **How to Use**
+##  **How to Use**
 1. Navigate to the service folder (e.g., `Compute/EC2`).
 2. Read the guide and follow the steps.
 3. Use provided scripts for quick deployment.
@@ -55,7 +55,7 @@ aws-services-repo/
 
 ---
 
-## ✅ **Contribution**
+##  **Contribution**
 Feel free to contribute! Fork the repo, make changes, and submit a pull request.
 
 ---
@@ -66,7 +66,7 @@ Feel free to contribute! Fork the repo, make changes, and submit a pull request.
 
 ---
 
-## ⭐ **Support**
+##  **Support**
 If you find this repo helpful, give it a **star** ⭐ and share with others!
 
 
