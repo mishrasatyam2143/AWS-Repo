@@ -210,21 +210,20 @@ Control how AWS places EC2 instances physically.
 ```bash
 aws ec2 describe-instances --output table
 Stop instance
-bash
-Copy code
+
 aws ec2 stop-instances --instance-ids i-xxxxxxxxxxxxx
 Start instance
-bash
-Copy code
+
 aws ec2 start-instances --instance-ids i-xxxxxxxxxxxxx
 Terminate instance
-bash
-Copy code
+
 aws ec2 terminate-instances --instance-ids i-xxxxxxxxxxxxx
 Create an EBS volume
-bash
-Copy code
+
 aws ec2 create-volume --size 8 --availability-zone ap-south-1a --volume-type gp3
+
+---
+
 Best Practices
 Use IAM roles instead of storing AWS keys
 
@@ -237,3 +236,5 @@ Tag all instances
 Use Auto Scaling Groups for production
 
 Enable EBS encryption by default
+
+---
