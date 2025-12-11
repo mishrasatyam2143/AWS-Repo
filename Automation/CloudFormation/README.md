@@ -1,0 +1,1 @@
+# CloudFormation docs coming soon
