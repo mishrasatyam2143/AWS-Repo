@@ -222,9 +222,14 @@ Create an EBS volume
 
 aws ec2 create-volume --size 8 --availability-zone ap-south-1a --volume-type gp3
 
+```
+```
+```
+
 ---
 
-Best Practices
+## Best Practices
+
 Use IAM roles instead of storing AWS keys
 
 Restrict SSH to your IP
