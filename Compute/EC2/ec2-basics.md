@@ -1,267 +1,239 @@
-EC2 Basics
+# EC2 Basics
 
-Amazon EC2 (Elastic Compute Cloud) is a core AWS compute service that provides resizable virtual servers in the cloud. You can launch, configure, scale, and terminate virtual machines based on your workload needs.
+Amazon EC2 (Elastic Compute Cloud) is a core AWS compute service that provides **resizable virtual servers** in the cloud. You can launch, configure, scale, and terminate virtual machines based on your workload needs.
 
-What is EC2?
+---
+
+## What is EC2?
 
 EC2 is a cloud-based virtual machine service that provides:
 
-On-demand compute capacity
+- On-demand compute capacity  
+- Customizable CPU, RAM, storage, and networking  
+- Flexible OS choice (Linux, Windows, custom AMIs)  
+- Pay-as-you-go pricing  
+- Integration with VPC, IAM, CloudWatch, EBS, and many other AWS services  
 
-Customizable CPU, RAM, storage, and networking
+### EC2 Use Cases
 
-Flexible OS choice (Linux, Windows, custom AMIs)
+- Hosting web applications  
+- Running backend APIs  
+- Databases and caching layers  
+- CI/CD runners  
+- Batch processing  
+- Container hosting (ECS, EKS worker nodes)  
 
-Pay-as-you-go pricing
+---
 
-Integration with VPC, IAM, CloudWatch, EBS and many other AWS services
-
-Common Use Cases
-
-Hosting web applications
-
-Running backend APIs
-
-Databases and caching layers
-
-CI/CD runners
-
-Batch processing
-
-Container hosting (ECS, EKS worker nodes)
-
-EC2 Instance Types and Families
+## EC2 Instance Types and Families
 
 EC2 instances are grouped into families based on optimization needs.
 
-Common Families
+### Common Families
 
-General purpose (t, m)
-Balanced compute, memory, network.
-Examples: t3.micro, m5.large
+**General purpose (t, m)**  
+Balanced compute, memory, network.  
+Examples: `t3.micro`, `m5.large`
 
-Compute optimized (c)
-High CPU performance.
-Example: c5.large
+**Compute optimized (c)**  
+High CPU performance.  
+Example: `c5.large`
 
-Memory optimized (r, x)
-High RAM for databases, analytics workloads.
-Example: r5.xlarge
+**Memory optimized (r, x)**  
+High RAM for databases, analytics workloads.  
+Example: `r5.xlarge`
 
-Storage optimized (i, d)
-High disk throughput using NVMe SSDs.
-Example: i3.large
+**Storage optimized (i, d)**  
+High disk throughput via NVMe SSDs.  
+Example: `i3.large`
 
-Accelerated computing (p, g)
-GPU-based for ML, graphics, and HPC.
-Examples: p3.2xlarge, g4dn.xlarge
+**Accelerated computing (p, g)**  
+GPU-based for ML, graphics, HPC.  
+Examples: `p3.2xlarge`, `g4dn.xlarge`
 
-Instance Sizes
+### Instance Sizes
 
-Instance sizes define available resources:
+`micro → small → medium → large → xlarge → 2xlarge → …`  
+Each size increase provides more CPU, RAM, and network performance.
 
-micro → small → medium → large → xlarge → 2xlarge → ...
+---
 
-Each step increases:
+## Amazon Machine Image (AMI)
 
-vCPU
+An AMI is the **template** used to launch EC2 instances.
 
-Memory
+An AMI contains:
 
-Network performance
+- Operating system  
+- Pre-installed software  
+- Bootstrapped configuration  
+- Optional customizations (e.g., Packer-built AMIs)
 
-What is an AMI (Amazon Machine Image)?
+### AMI Examples
 
-An AMI is the template used to launch EC2 instances. It contains:
+- Amazon Linux 2  
+- Ubuntu  
+- Windows Server  
+- Custom AMIs  
 
-Operating System
+**Note:** AMIs are region-specific.
 
-Pre-installed software
+---
 
-Configuration settings
+## Key Pair (SSH Key)
 
-Optional customizations (via tools like Packer)
+A key pair is used to authenticate into EC2.
 
-Common AMI Types
+- **Linux:** SSH using `.pem` private key  
+- **Windows:** decrypt admin password using the key  
 
-Amazon Linux 2
+AWS does **not** allow re-download of the private key. If lost, you must create a new one.
 
-Ubuntu
+---
 
-Windows Server
+## Security Groups (SG)
 
-Custom AMIs (snapshots, golden images)
+Security Groups act as **stateful virtual firewalls**.
 
-Important: AMIs are region-specific.
+### Key Features
 
-Key Pair (SSH Key)
+- Control inbound and outbound traffic  
+- Stateful: return traffic is automatically allowed  
+- Attached at the instance level  
 
-A key pair is used to authenticate into an EC2 instance.
+### Example Rule
 
-Linux: SSH using the private key (.pem)
-
-Windows: Decrypt the admin password using the key
-
-If you lose the .pem file, AWS does not let you re-download it.
-
-Security Group (SG)
-
-A Security Group is a stateful virtual firewall that controls instance traffic.
-
-Key Points
-
-Controls inbound/outbound rules
-
-Stateful (reply traffic automatically allowed)
-
-Attached at instance level
-
-Default outbound is allow-all
-
-Example: Allow SSH only from your IP
 Type: SSH
 Port: 22
 Source: 203.0.113.5/32
 
-Subnet and VPC
+yaml
+Copy code
 
-Instances run inside a Virtual Private Cloud (VPC).
+---
 
-Subnets
+## VPC and Subnets
 
-Public subnet: Has route to an Internet Gateway
+Instances launch inside a **Virtual Private Cloud (VPC)**.
 
-Private subnet: No direct internet access; uses NAT Gateway if needed
+### Subnets
 
-Best Practices
+- **Public subnet** → route to Internet Gateway  
+- **Private subnet** → no direct internet (uses NAT Gateway)  
 
-Web servers in public subnet
+### Best Practices
 
-Databases in private subnet
+- Public subnet → web servers  
+- Private subnet → databases / internal services  
 
-Elastic IP (EIP)
+---
 
-A static public IPv4 address owned by your AWS account.
+## Elastic IP (EIP)
 
-When to use:
+A static public IPv4 address you can attach to an instance.
 
-When your instance restarts and needs a fixed IP
+### Use cases:
 
-When hosting production apps
+- Fixed IP for DNS  
+- When instance restarts  
+- Production apps needing stable endpoints  
 
-When dealing with DNS records pointing to a server
+**Note:** EIP costs money when *not attached*.
 
-Note: EIP incurs cost if not attached to a running instance.
+---
 
-EBS Volumes (Elastic Block Store)
+## EBS Volumes (Elastic Block Store)
 
-EBS provides persistent block storage for EC2 instances.
+Network-attached persistent storage for EC2.
 
-Volume Types
+### Volume Types
 
-gp3: General purpose SSD
+- **gp3** – general purpose SSD  
+- **io2** – provisioned IOPS SSD  
+- **st1** – throughput HDD  
+- **sc1** – cold HDD  
 
-io2: High IOPS SSD
+### Properties
 
-st1: Throughput optimized HDD
+- Persist beyond instance termination (optional)  
+- Can be resized  
+- Support snapshots  
 
-sc1: Cold HDD
+---
 
-Use Cases
+## Placement Groups
 
-Root OS volume
+Control how AWS places EC2 instances physically.
 
-Additional storage
+### Types
 
-Database storage
+- **Cluster** – low latency, high bandwidth  
+- **Spread** – maximum fault tolerance  
+- **Partition** – big data workloads (Hadoop, Spark)  
 
-Snapshots for backup or AMI creation
+---
 
-Properties
+## EC2 Instance Lifecycle
 
-Persistent beyond EC2 termination (unless delete-on-termination=true)
+### States
 
-Can be resized
+- pending  
+- running  
+- stopping  
+- stopped  
+- terminated  
 
-Supports snapshots
+### Billing Rules
 
-Placement Groups
+- Charged when instance is **running**  
+- EBS volumes charge even if the instance is stopped  
+- EIP charges when unused  
 
-Placement groups control how EC2 instances are placed on AWS hardware.
+---
 
-Types
+## Launching an EC2 Instance (Simplified)
 
-Cluster: Low latency, high bandwidth (same rack)
+1. Choose AMI  
+2. Select instance type  
+3. Choose VPC + subnet  
+4. Configure EBS storage  
+5. Add tags  
+6. Set security groups  
+7. Select or create key pair  
+8. Launch  
 
-Spread: Instances on different hardware (fault tolerance)
+---
 
-Partition: Used by Hadoop, Spark, large distributed systems
+## Useful EC2 CLI Commands
 
-EC2 Instance Lifecycle
-States
-
-pending
-
-running
-
-stopping
-
-stopped
-
-terminated
-
-Billing Notes
-
-You pay when an instance is running
-
-EBS volumes continue billing even if instance is stopped
-
-EIP bills when unused
-
-Launching an EC2 Instance (Simplified Steps)
-
-Choose an AMI
-
-Select instance type (e.g., t3.micro)
-
-Choose VPC + subnet
-
-Configure storage (EBS)
-
-Add tags
-
-Configure security group rules
-
-Create/select key pair
-
-Launch instance
-
-Useful EC2 CLI Commands
-List instances
+### List instances
+```bash
 aws ec2 describe-instances --output table
-
 Stop instance
+bash
+Copy code
 aws ec2 stop-instances --instance-ids i-xxxxxxxxxxxxx
-
 Start instance
+bash
+Copy code
 aws ec2 start-instances --instance-ids i-xxxxxxxxxxxxx
-
 Terminate instance
+bash
+Copy code
 aws ec2 terminate-instances --instance-ids i-xxxxxxxxxxxxx
-
 Create an EBS volume
+bash
+Copy code
 aws ec2 create-volume --size 8 --availability-zone ap-south-1a --volume-type gp3
+Best Practices
+Use IAM roles instead of storing AWS keys
 
-Notes / Best Practices
-
-Use IAM roles instead of storing AWS keys on the server
-
-Restrict SSH to your own IP only
+Restrict SSH to your IP
 
 Prefer SSM Session Manager over SSH
 
-Always tag resources for tracking
+Tag all instances
 
-Use Auto Scaling Groups for production workloads
+Use Auto Scaling Groups for production
 
 Enable EBS encryption by default
