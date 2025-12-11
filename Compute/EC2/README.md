@@ -3,9 +3,9 @@
 This folder contains quick guides and examples for EC2.
 
 ## Files
-- [EC2 Basics](ec2-basics.md) — conceptual overview and common concepts.
-- [EC2 CLI Commands](ec2-cli-commands.md) — cheat sheet for common `aws ec2` commands.
-- [Terraform example](terraform-ec2.tf) — minimal Terraform example to create an EC2 instance.
+- [EC2 Basics](ec2-basics.md) - conceptual overview and common concepts.
+- [EC2 CLI Commands](ec2-cli-commands.md) - cheat sheet for common `aws ec2` commands.
+- [Terraform example](terraform-ec2.tf) - minimal Terraform example to create an EC2 instance.
 
 ## Quick start
 1. Read `ec2-basics.md` to understand concepts.
