@@ -1,1 +1,1 @@
-# Lambda Documentation coming soon
+# Lambda docs coming soon

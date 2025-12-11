@@ -1,1 +1,1 @@
-# EKS Documentation coming soon
+# EKS docs coming soon

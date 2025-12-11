@@ -1,1 +1,1 @@
-# VPC Notes coming soon
+# VPC notes

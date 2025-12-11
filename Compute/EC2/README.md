@@ -1,1 +1,1 @@
-# EC2 Documentation coming soon
+# EC2 docs coming soon

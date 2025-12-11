@@ -1,1 +1,1 @@
-# S3 Docs coming soon
+# S3 docs

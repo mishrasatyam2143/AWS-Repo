@@ -1,1 +1,1 @@
-# EBS Docs coming soon
+# EBS docs
