@@ -13,25 +13,62 @@ This repository provides:
 ---
 
 ```
-aws-services-repo/
+aws-services-repo
+├── Automation
+│   ├── CloudFormation
+│   │   └── README.md
+│   └── Terraform
+│       └── README.md
+├── Compute
+│   ├── EC2
+│   │   ├── ec2-basics.md
+│   │   ├── ec2-cli-commands.md
+│   │   ├── README.md
+│   │   ├── terraform-ec2.md
+│   │   └── terraform-ec2.tf
+│   ├── EKS
+│   │   └── README.md
+│   └── Lambda
+│       ├── lambda-intro.md
+│       ├── README.md
+│       └── sample-function.py
+├── Database
+│   ├── DynamoDB
+│   │   └── README.md
+│   └── RDS
+│       └── README.md
+├── Databases
+│   ├── DynamoDB
+│   └── RDS
+├── Monitoring
+│   ├── CloudTrail
+│   │   └── README.md
+│   └── CloudWatch
+│       └── README.md
+├── Networking
+│   ├── Loadbalancers
+│   ├── LoadBalancers
+│   │   └── README.md
+│   ├── Route53
+│   │   └── README.md
+│   └── VPC
+│       └── README.md
 ├── README.md
-├── Compute/
-│   ├── EC2/
-│   │   ├── ec2-basics.md
-│   │   ├── ec2-cli-commands.md
-│   │   └── terraform-ec2.tf
-│   ├── Lambda/
-│   │   ├── lambda-intro.md
-│   │   └── sample-function.py
-│   └── EKS/
-│       ├── eks-setup.md
-│       └── eks-troubleshooting.md
-├── Storage/
-│   ├── S3/
-│   └── EBS/
-└── Networking/
-    ├── VPC/
-    └── Route53/
+├── Security
+│   ├── IAM
+│   │   └── README.md
+│   ├── KMS
+│   │   └── README.md
+│   └── SecretsManager
+│       └── README.md
+└── Storage
+    ├── EBS
+    │   └── README.md
+    ├── EFS
+    │   └── README.md
+    └── S3
+        └── README.md
+
 ```
 
 ---
