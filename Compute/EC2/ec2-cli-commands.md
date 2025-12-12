@@ -21,9 +21,10 @@ aws configure
 
 ---
 
-1. EC2 Instance Information Commands
+#  1. EC2 Instance Information Commands
 
 List all instances (table format)
+
 ```bash
 aws ec2 describe-instances --output table
 ```
@@ -33,6 +34,7 @@ Shows all instances with all attributes.
 ---
 
 List specific fields (clean output)
+
 ```bash
 aws ec2 describe-instances \
   --query 'Reservations[].Instances[].{ID:InstanceId,State:State.Name,Type:InstanceType,PublicIP:PublicIpAddress,Name:Tags[?Key==`Name`].Value|[0]}' \
@@ -41,17 +43,20 @@ aws ec2 describe-instances \
 ---
 
 List only instance IDs
+
 ```bash
 aws ec2 describe-instances --query 'Reservations[].Instances[].InstanceId' --output text
 ```
 ---
+
 Get details of a single instance
+
 ```bash
 aws ec2 describe-instances --instance-ids i-1234567890abcdef0
 ```
 ---
 
-2. Launching EC2 Instances
+#  2. Launching EC2 Instances
 Launch a basic EC2 instance
 
 ```bash
@@ -78,7 +83,7 @@ Important Parameters
 
 ---
 
-3. Managing EC2 Instance Lifecycle
+#  3. Managing EC2 Instance Lifecycle
 
 Start an instance
 
@@ -104,7 +109,7 @@ Terminate an instance
 aws ec2 terminate-instances --instance-ids i-1234567890abcdef0
 ```
 
-4. Working With Security Groups
+#  4. Working With Security Groups
 
 List security groups
 
@@ -132,7 +137,7 @@ aws ec2 authorize-security-group-ingress \
 ```
 ---
 
-5. Working With Key Pairs
+#  5. Working With Key Pairs
 
 List key pairs
 
@@ -149,7 +154,7 @@ chmod 400 my-key.pem
 
 ---
 
-6. EBS Volume Commands
+#  6. EBS Volume Commands
 
 Create a volume
 
@@ -182,7 +187,7 @@ aws ec2 detach-volume --volume-id vol-1234567890abcdef0
 ```
 ---
 
-7. Elastic IP Commands
+#  7. Elastic IP Commands
 
 Allocate an Elastic IP
 
@@ -199,7 +204,7 @@ aws ec2 associate-address \
 ```
 ---
 
-8. Tagging Resources
+#  8. Tagging Resources
 
 Add tags to an instance
 
@@ -217,7 +222,7 @@ aws ec2 describe-tags --filters "Name=resource-id,Values=i-1234567890abcdef0"
 
 ---
 
-9. EC2 Instance Metadata (Run inside EC2)
+# 9. EC2 Instance Metadata (Run inside EC2)
 
 Get instance ID
 
@@ -233,7 +238,7 @@ curl http://169.254.169.254/latest/meta-data/public-ipv4
 
 ---
 
-10. Useful Filters and Query Helpers
+# 10. Useful Filters and Query Helpers
 
 Get running instances only
 
@@ -251,7 +256,7 @@ aws ec2 describe-instances \
 ```
 ---
 
-## Best Practices
+# Best Practices
 
 - Use IAM roles instead of storing keys
 
