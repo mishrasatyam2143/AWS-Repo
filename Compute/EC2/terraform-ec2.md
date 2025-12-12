@@ -46,7 +46,7 @@ You must pass the path to your public SSH key and your IP address (for SSH acces
 
 ---
 
-## 💻 `terraform-ec2.tf` File Contents
+##  `terraform-ec2.tf` File Contents
 
 ### HCL Configuration
 
