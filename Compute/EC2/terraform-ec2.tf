@@ -1,58 +1,10 @@
-# AWS EC2 Instance Provisioning (Single-File Terraform)
+# --------------------------------------------------------------------------------------------------
+# terraform-ec2.tf: Single-file, documented Terraform example to create a simple EC2 instance on AWS.
+# Documentation and instructions are available in the companion README.md or terraform-ec2.md file.
+# --------------------------------------------------------------------------------------------------
 
-This is a complete, single-file example (`terraform-ec2.tf`) to provision a basic EC2 instance on AWS. It sets up a Security Group, creates an SSH Key Pair, and runs a simple `cloud-init` script to install Nginx.
-
----
-
-## Quick Start Instructions
-
-You must pass the path to your public SSH key and your IP address (for SSH access) as variables.
-
-###  Required Variables
-
-| Variable | Description | Default Value | Action Needed |
-| :--- | :--- | :--- | :--- |
-| `public_key_path` | **Absolute path** to your public SSH key (e.g., `/home/user/.ssh/id_rsa.pub`). | `""` | **MUST OVERRIDE** |
-| `ssh_cidr` | CIDR allowed for SSH access (use your public IP, e.g., `203.0.113.5/32`). Default is open to the world. | `"0.0.0.0/0"` | **SHOULD OVERRIDE** |
-
-### Usage Commands
-
-1.  **Initialize Terraform:**
-    ```bash
-    terraform init
-    ```
-
-2.  **Plan the Deployment (Validation):**
-    Review the plan to ensure no unintended resources are created, modified, or destroyed.
-    ```bash
-    terraform plan \
-      -var "public_key_path=/home/user/.ssh/id_rsa.pub" \
-      -var "ssh_cidr=203.0.113.5/32"
-    ```
-
-3.  **Apply the Configuration:**
-    ```bash
-    terraform apply \
-      -var "public_key_path=/home/user/.ssh/id_rsa.pub" \
-      -var "ssh_cidr=203.0.113.5/32"
-    ```
-    
-4.  **Destroy Resources (Cleanup):**
-    ```bash
-    terraform destroy \
-      -var "public_key_path=/home/user/.ssh/id_rsa.pub" \
-      -var "ssh_cidr=203.0.113.5/32"
-    ```
-
----
-
-## 💻 `terraform-ec2.tf` File Contents
-
-### HCL Configuration
-
-```hcl
 # ----------------------------
-# Variables (change as needed)
+# Variables
 # ----------------------------
 variable "region" {
   description = "AWS region"
