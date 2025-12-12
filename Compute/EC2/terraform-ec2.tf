@@ -1,16 +1,49 @@
+# AWS EC2 Instance Provisioning (Single-File Terraform)
+
+This single-file Terraform configuration (`terraform-ec2.tf`) creates a secure, basic EC2 instance on AWS, sets up a Security Group, and provisions an SSH key from a local public key file.
+
+##  Quick Start Usage
+
+Before applying, ensure you have your public SSH key path and your current IP/CIDR set.
+
+1.  **Initialize Terraform:**
+    ```bash
+    terraform init
+    ```
+
+2.  **Plan the Deployment (Validation):**
+    Review the plan to ensure no unintended changes are made. Replace the variable values with your actual path and IP.
+
+    ```bash
+    terraform plan \
+      -var "public_key_path=/home/user/.ssh/id_rsa.pub" \
+      -var "ssh_cidr=203.0.113.5/32"
+    ```
+
+3.  **Apply the Configuration:**
+    ```bash
+    terraform apply \
+      -var "public_key_path=/home/user/.ssh/id_rsa.pub" \
+      -var "ssh_cidr=203.0.113.5/32"
+    ```
+
+---
+
+##  `terraform-ec2.tf`
+
+### File Contents
+
+```hcl
 ###############################################################################
 # terraform-ec2.tf
 #
-# Single-file, self-documented Terraform example to create a simple EC2 instance.
-# Suitable for learning and small demos. Replace AMI, region and key path before apply.
+# Single-file, documented Terraform example to create a simple EC2 instance.
+# Replace AMI, region and key path before apply.
 #
-# Important: This example creates network and compute resources in your AWS account.
-# Running it will incur charges. Destroy when finished: `terraform destroy`.
-#
-# Usage:
-#   terraform init
-#   terraform plan -var "public_key_path=~/.ssh/id_rsa.pub" -var "ami_id=ami-xxxx"
-#   terraform apply -var "public_key_path=~/.ssh/id_rsa.pub" -var "ami_id=ami-xxxx"
+# Usage (example):
+#    terraform init
+#    terraform plan -var "public_key_path=/home/user/.ssh/id_rsa.pub" -var "ssh_cidr=203.0.113.5/32"
+#    terraform apply -var "public_key_path=/home/user/.ssh/id_rsa.pub" -var "ssh_cidr=203.0.113.5/32"
 #
 ###############################################################################
 
@@ -24,9 +57,9 @@ variable "region" {
 }
 
 variable "ami_id" {
-  description = "AMI ID to use for the instance (replace with a valid AMI in your region)"
+  description = "AMI ID to use for the instance (optional). If empty, Terraform looks up a recent Amazon Linux 2 AMI."
   type        = string
-  default     = "ami-0123456789abcdef0"
+  default     = ""
 }
 
 variable "instance_type" {
@@ -36,21 +69,43 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  description = "Name to give the created key pair resource"
+  description = "Name to give the created key pair resource (or use existing key name)"
   type        = string
   default     = "example-key"
 }
 
 variable "public_key_path" {
-  description = "Path to the SSH public key that will be uploaded as key pair"
+  description = "Absolute path to SSH public key (e.g. /home/user/.ssh/id_rsa.pub). Required."
   type        = string
-  default     = "~/.ssh/id_rsa.pub"
+  default     = ""
+  validation {
+    condition     = length(var.public_key_path) > 0
+    error_message = "Set public_key_path to the absolute path of your public SSH key before apply."
+  }
+}
+
+variable "private_key_path" {
+  description = "Private key path used in the ssh_command output (for convenience). Provide absolute path if desired."
+  type        = string
+  default     = "~/.ssh/id_rsa"
 }
 
 variable "instance_name" {
   description = "Name tag for the instance"
   type        = string
   default     = "terraform-example-ec2"
+}
+
+variable "ssh_cidr" {
+  description = "CIDR allowed for SSH (use your IP, e.g. 203.0.113.5/32). Default opens to all — override in production."
+  type        = string
+  default     = "0.0.0.0/0"
+}
+
+variable "subnet_id" {
+  description = "Optional subnet id (leave empty to use default subnet)"
+  type        = string
+  default     = ""
 }
 
 # ----------------------------
@@ -71,32 +126,32 @@ provider "aws" {
 }
 
 # ----------------------------
-# Minimal VPC networking note
+# AMI data source (fallback)
 # ----------------------------
-# This example uses the default VPC in the region. For production, create a
-# dedicated VPC, subnets, IGW, NAT and security controls.
-#
-# Get default VPC id:
-#   aws ec2 describe-vpcs --filters "Name=isDefault,Values=true" --query "Vpcs[0].VpcId" --output text
-#
-# Optionally set a subnet id using the 'subnet_id' variable (not included here).
+# If var.ami_id is empty, use a recent Amazon Linux 2 AMI for the region.
+data "aws_ami" "amazon_linux2" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+  owners = ["amazon"]
+}
 
 # ----------------------------
 # Security Group (basic)
 # ----------------------------
 resource "aws_security_group" "ec2_sg" {
   name        = "${var.instance_name}-sg"
-  description = "Allow SSH and HTTP"
-  # Using default VPC; change vpc_id for custom VPCs
-  # vpc_id = "vpc-xxxxxxxx"
+  description = "Allow SSH (limited via var.ssh_cidr) and HTTP"
+  # Uncomment to set a specific VPC: vpc_id = "vpc-xxxxxxxx"
 
   ingress {
-    description = "SSH from local IP (update before production)"
+    description = "SSH from allowed CIDR"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    # Replace with your IP/CIDR for better security, e.g. "203.0.113.5/32"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.ssh_cidr]
   }
 
   ingress {
@@ -123,8 +178,7 @@ resource "aws_security_group" "ec2_sg" {
 # ----------------------------
 # Key pair using local public key
 # ----------------------------
-# This reads your public key from the path provided in var.public_key_path and
-# creates an aws_key_pair resource (the private key remains on your machine).
+# Terraform reads your public key and registers it as an AWS key pair.
 resource "aws_key_pair" "deployer" {
   key_name   = var.key_name
   public_key = file(var.public_key_path)
@@ -133,39 +187,43 @@ resource "aws_key_pair" "deployer" {
 # ----------------------------
 # EC2 Instance
 # ----------------------------
-# This is a simple example that creates one instance in the default subnet.
-# It attaches the security group and key pair defined above.
 resource "aws_instance" "example" {
-  ami                    = var.ami_id
-  instance_type          = var.instance_type
-  key_name               = aws_key_pair.deployer.key_name
+  ami             = var.ami_id != "" ? var.ami_id : data.aws_ami.amazon_linux2.id
+  instance_type = var.instance_type
+  key_name      = aws_key_pair.deployer.key_name
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
-  # Optional user_data for simple bootstrap (cloud-init)
+  # Use a specific subnet if provided, otherwise leave AWS to pick a default
+  subnet_id = var.subnet_id != "" ? var.subnet_id : null
+
+  # Hardening: require IMDSv2
+  metadata_options {
+    http_tokens = "required"
+  }
+
+  # Simple cloud-init: install nginx (works on Amazon Linux and Debian/Ubuntu)
   user_data = <<-EOF
               #!/bin/bash
-              # Simple bootstrap: install nginx
-              yum update -y || apt-get update -y
-              if command -v yum >/dev/null 2>&1; then
+              set -eux
+              if grep -qi "amzn" /etc/os-release 2>/dev/null; then
+                yum update -y
                 yum install -y nginx
-                systemctl enable nginx
-                systemctl start nginx
-              else
+                systemctl enable --now nginx
+              elif [ -f /etc/debian_version ]; then
+                apt-get update -y
                 apt-get install -y nginx
-                systemctl enable nginx
-                systemctl start nginx
+                systemctl enable --now nginx
               fi
               EOF
 
   tags = {
-    Name = var.instance_name
+    Name        = var.instance_name
     Environment = "dev"
   }
 
-  # Block device mapping example: keep root volume small
   root_block_device {
-    volume_type = "gp3"
-    volume_size = 8
+    volume_type           = "gp3"
+    volume_size           = 8
     delete_on_termination = true
   }
 }
@@ -184,9 +242,10 @@ output "public_ip" {
 }
 
 output "ssh_command" {
-  description = "Example ssh command to connect (use your private key)"
-  value       = "ssh -i ~/.ssh/id_rsa ec2-user@${aws_instance.example.public_ip}"
+  description = "Example ssh command to connect (replace private key path if needed)"
+  value       = "ssh -i ${var.private_key_path} ec2-user@${aws_instance.example.public_ip}"
 }
+
 
 ###############################################################################
 # Notes and recommended changes before running:
@@ -196,4 +255,3 @@ output "ssh_command" {
 #    attribute to the aws_instance resource: subnet_id = "subnet-xxxxx"
 # 4) For production, move variables to variables.tf and use a remote state backend.
 ###############################################################################
-
