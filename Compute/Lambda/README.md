@@ -1,40 +1,37 @@
-# AWS Lambda: Python Greeting Function Deployment
+# 💻 Compute: AWS Lambda Serverless Function
 
-This directory contains a complete, deployable example of a Python Lambda function managed by Terraform.
+This directory contains a complete, deployable example of a serverless Python Lambda function, defining all infrastructure components using **Terraform**.
 
-## `:x
- Deployment Steps
+## 📁 Repository Structure
 
-1.  **Run Prerequisites:**
-    Ensure Terraform and the AWS CLI are installed.
+* `lambda-intro.md`: Conceptual deep dive into AWS Lambda concepts, execution environments, and best practices.
+* `sample-function.py`: The Python source code for the greeting function.
+* `scripts/`: Contains the shell script to package the code into a `.zip` file.
+* `terraform/`: Contains all Infrastructure-as-Code files (`.tf`) for function deployment and IAM configuration.
 
-2.  **Package the Code:**
-    Execute the packaging script to create the deployment ZIP file:
+##  Deployment Instructions (Terraform)
+
+1.  **Package the Code:**
+    Run the deployment script to create the `function.zip` file, which Terraform needs:
     ```bash
     ./scripts/create_package.sh
     ```
 
-3.  **Deploy Infrastructure:**
+2.  **Deploy Infrastructure:**
     Navigate to the Terraform directory and deploy:
     ```bash
     cd terraform
     terraform init
-    terraform plan
     terraform apply
     ```
 
-4.  **Test the Function:**
-    Use the AWS CLI to invoke the deployed function with a payload:
+3.  **Testing the Function (via AWS CLI):**
+    Use the AWS CLI to invoke the deployed function:
     ```bash
     aws lambda invoke \
       --function-name greeting-lambda-function \
-      --payload '{"name": "Terraform"}' \
+      --payload '{"name": "Terraform User"}' \
       response.json
     
-    cat response.json
+    cat response.json  # Expected output: {"statusCode": 200, "body": "Hello, Terraform User!"}
     ```
-    (The `response.json` file will contain the output: `"Hello, Terraform!"`)
-
----
-
-

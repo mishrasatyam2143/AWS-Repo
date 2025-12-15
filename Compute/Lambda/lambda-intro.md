@@ -1,14 +1,37 @@
-# Lambda Intro
+#  Compute: AWS Lambda Serverless Function
 
-Topics covered:
-- What is AWS Lambda
-- Use cases for serverless (small jobs, webhooks, scheduled tasks)
-- Supported runtimes (Python, Node.js, etc)
-- IAM role basics for Lambda
-- Deployment options (console, AWS CLI, SAM, Terraform)
+This directory contains a complete, deployable example of a serverless Python Lambda function, defining all infrastructure components using **Terraform**.
 
-Quick example
-- Create role with minimal permissions for Lambda execution and basic CloudWatch logs.
-- Zip function and deploy or use SAM for local testing.
+##  Repository Structure
 
-Security note: never embed secrets in code. Use Secrets Manager or environment variables with encryption.
+* `lambda-intro.md`: Conceptual deep dive into AWS Lambda concepts, execution environments, and best practices.
+* `sample-function.py`: The Python source code for the greeting function.
+* `scripts/`: Contains the shell script to package the code into a `.zip` file.
+* `terraform/`: Contains all Infrastructure-as-Code files (`.tf`) for function deployment and IAM configuration.
+
+##  Deployment Instructions (Terraform)
+
+1.  **Package the Code:**
+    Run the deployment script to create the `function.zip` file, which Terraform needs:
+    ```bash
+    ./scripts/create_package.sh
+    ```
+
+2.  **Deploy Infrastructure:**
+    Navigate to the Terraform directory and deploy:
+    ```bash
+    cd terraform
+    terraform init
+    terraform apply
+    ```
+
+3.  **Testing the Function (via AWS CLI):**
+    Use the AWS CLI to invoke the deployed function:
+    ```bash
+    aws lambda invoke \
+      --function-name greeting-lambda-function \
+      --payload '{"name": "Terraform User"}' \
+      response.json
+    
+    cat response.json  # Expected output: {"statusCode": 200, "body": "Hello, Terraform User!"}
+    ```
