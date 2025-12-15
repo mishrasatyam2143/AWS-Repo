@@ -1,8 +1,8 @@
-# 💻 Compute: AWS Lambda Serverless Function
+#  Compute: AWS Lambda Serverless Function
 
 This directory contains a complete, deployable example of a serverless Python Lambda function, defining all infrastructure components using **Terraform**.
 
-## 📁 Repository Structure
+##  Repository Structure
 
 * `lambda-intro.md`: Conceptual deep dive into AWS Lambda concepts, execution environments, and best practices.
 * `sample-function.py`: The Python source code for the greeting function.
