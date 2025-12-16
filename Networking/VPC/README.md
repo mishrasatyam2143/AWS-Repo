@@ -1,15 +1,14 @@
-```markdown
 #  VPC Terraform Module: Highly Available Network Guide
 
 This directory contains a reusable Terraform module for provisioning a standard, highly available AWS VPC network.
 
-##  Module Structure Overview
+## Module Structure Overview
 
 * `terraform/main.tf`: Defines all core VPC resources, including the VPC, IGW, NAT Gateway, EIP, and all subnets and route tables.
 * `terraform/variables.tf`: Allows customization of the VPC CIDR block and resource naming via the `environment` variable.
 * `terraform/outputs.tf`: Exports the IDs of critical resources (VPC ID, subnet IDs) necessary for other modules (like EC2, RDS, or EKS) to integrate with this network.
 
-##  Module Features and Topology
+## Module Features and Topology
 
 This module creates a **secure, two-tier network topology** across two Availability Zones (AZs):
 
@@ -21,7 +20,7 @@ This module creates a **secure, two-tier network topology** across two Availabil
 | **NAT Gateway** | 1 | Enables outbound internet access for Private Subnets. | Placed in Public Subnet 1 |
 | **Route Tables** | 2 | One Public (routes to IGW), one Private (routes to NAT Gateway). | Automatically associated |
 
-##  Deployment Instructions
+## Deployment Instructions
 
 1.  **Review Variables:** Check the default values in `terraform/variables.tf`.
     ```bash
@@ -42,7 +41,7 @@ This module creates a **secure, two-tier network topology** across two Availabil
     terraform apply
     ```
 
-##  Integration (How to Use This VPC)
+## Integration (How to Use This VPC)
 
 To launch an EC2 instance into this VPC, you would reference the module's outputs in your EC2 Terraform code:
 
@@ -54,6 +53,6 @@ module "vpc" {
 
 resource "aws_instance" "app" {
   # Launch the instance into one of the exported private subnets
-  subnet_id = module.vpc.private_subnet_ids[0] 
+  subnet_id = module.vpc.private_subnet_ids[0]
   # ...
 }
